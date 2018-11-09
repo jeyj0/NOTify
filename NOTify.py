@@ -14,13 +14,16 @@ channelToWorkMap = {
     '__label__-12_random-fun': False,
     '__label__unrestricted-chat': False
 }
-
+logFileName = 'NOTify.log'
 isWorkHours = True
 
+with open(logFileName, 'w') as logFile:
+    logFile.write('')
 
-def logNotification(msg):
+
+def log(msg):
     print(msg)
-    with open('NOTify.log', 'a') as log:
+    with open(logFileName, 'a') as log:
         log.write(msg + '\n')
 
 
@@ -35,9 +38,9 @@ def handleNotification(text):
         shouldBeShown = not shouldBeShown
 
     if shouldBeShown:
-        logNotification('New message in ' + output)
+        log('New message in ' + output[9:])
     else:
-        logNotification('(silence)')
+        log('(silence)')
 
 
 @app.route('/notify', methods=['POST'])
@@ -54,6 +57,7 @@ def notify():
 def setWork():
     global isWorkHours
     isWorkHours = True
+    log("--MODE: Work hours")
     return '{"isWorkHours":true}'
 
 
@@ -61,6 +65,7 @@ def setWork():
 def setFree():
     global isWorkHours
     isWorkHours = False
+    log("--MODE: Free time")
     return '{"isWorkHours":false}'
 
 
