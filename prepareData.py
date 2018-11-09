@@ -1,20 +1,14 @@
 import re
-import json
-from collections import namedtuple
 from os import listdir
 from random import shuffle
 from math import ceil
 
+from loadFromJSONString import loadFromJSONString
 from beautifyMessage import beautifyMessage
 
 datapath = "./data"
 messages = []
 link_pattern = re.compile("^<https?://.*")
-
-
-def loadFromJSONString(data):
-    return json.loads(data, object_hook=lambda d: namedtuple(
-        'X', d.keys())(*d.values()))
 
 
 def getChannels(path):
@@ -35,6 +29,9 @@ def meaningfulMessage(text):
     return True
 
 
+channels = []
+
+
 def processFile(filepath, channel):
     with open(filepath, 'r') as myfile:
         jsonString = myfile.read().replace('\n', '')
@@ -43,6 +40,10 @@ def processFile(filepath, channel):
             if not hasattr(msg, 'subtype'):  # and not msg.subtype in subtypes:
                 if meaningfulMessage(msg.text):
                     text = beautifyMessage(msg.text)
+                    if channel in channels:
+                        channels[channel] = channels[channel] + 1
+                    else:
+                        channels[channel] = 0
                     messages.append((channel, text))
 
 

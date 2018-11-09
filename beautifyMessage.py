@@ -6,4 +6,5 @@ def beautifyMessage(text):
     text = re.sub('\n', ' ', text)
     text = re.sub(' +', ' ', text)
     text = text.lower()
+    # replace mentions with arbitrary placeholder
     return text
