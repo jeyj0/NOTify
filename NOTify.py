@@ -27,6 +27,20 @@ def log(msg):
         log.write(msg + '\n')
 
 
+freeTimeQueue = []
+
+
+def addToFreeTimeQueue(msg):
+    freeTimeQueue.append(msg)
+
+
+workTimeQueue = []
+
+
+def addToWorkQueue(msg):
+    workTimeQueue.append(msg)
+
+
 def handleNotification(text):
     output = classifier.predict([text])[0][0][0]
 
@@ -37,10 +51,15 @@ def handleNotification(text):
     if not isWorkHours:
         shouldBeShown = not shouldBeShown
 
+    message = 'New message in ' + output[9:]
+
     if shouldBeShown:
-        log('New message in ' + output[9:])
+        log(message)
     else:
-        log('(silence)')
+        if isWorkHours:
+            addToFreeTimeQueue(message)
+        else:
+            addToWorkQueue(message)
 
 
 @app.route('/notify', methods=['POST'])
@@ -53,11 +72,21 @@ def notify():
     return request.data
 
 
+def workThroughQueue(queue):
+    for msg in queue:
+        log(msg)
+
+
 @app.route('/work', methods=['POST'])
 def setWork():
     global isWorkHours
     isWorkHours = True
     log("--MODE: Work hours")
+
+    global workTimeQueue
+    workThroughQueue(workTimeQueue)
+    workTimeQueue = []
+
     return '{"isWorkHours":true}'
 
 
@@ -66,6 +95,11 @@ def setFree():
     global isWorkHours
     isWorkHours = False
     log("--MODE: Free time")
+
+    global freeTimeQueue
+    workThroughQueue(freeTimeQueue)
+    freeTimeQueue = []
+
     return '{"isWorkHours":false}'
 
 
