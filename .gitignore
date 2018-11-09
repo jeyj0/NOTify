@@ -4,7 +4,7 @@ SlackExport.zip
 data/
 *data.txt
 *model.bin
-*model.vec
+*.vec
 message.txt
 
 # Byte-compiled / optimized / DLL files
