@@ -3,8 +3,11 @@ import json
 from collections import namedtuple
 from os import listdir
 from random import shuffle
+from math import ceil
 
 datapath = "./data"
+messages = []
+link_pattern = re.compile("^<https?://.*")
 
 
 def loadFromJSONString(data):
@@ -18,12 +21,6 @@ def getChannels(path):
 
 def getFiles(path):
     return listdir(path)
-
-
-messages = []
-
-
-link_pattern = re.compile("^<https?://.*")
 
 
 def meaningfulMessage(text):
@@ -64,11 +61,27 @@ for c in getChannels(datapath):
 
 def formatForFile(messages):
     output = ""
-    shuffle(messages)
     for message in messages:
         output += "__label__" + message[0] + " " + message[1] + "\n"
     return output
 
 
-with open('./data.txt', 'w') as datafile:
-    datafile.write(formatForFile(messages))
+def separateMessages(messages):
+    length = len(messages)
+    training_percent = 4/5
+    training_amount = ceil(length * training_percent)
+    return (messages[:training_amount], messages[training_amount:])
+
+
+def writeMessagesToFileInCorrectFormat(messages, filename):
+    with open(filename, 'w') as datafile:
+        datafile.write(formatForFile(messages))
+
+
+shuffle(messages)
+separated_messages = separateMessages(messages)
+
+writeMessagesToFileInCorrectFormat(
+    separated_messages[0], './training_data.txt')
+writeMessagesToFileInCorrectFormat(
+    separated_messages[1], './validation_data.txt')
