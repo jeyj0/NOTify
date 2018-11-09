@@ -2,6 +2,7 @@ import re
 import json
 from collections import namedtuple
 from os import listdir
+from random import shuffle
 
 datapath = "./data"
 
@@ -37,6 +38,7 @@ def meaningfulMessage(text):
 
 def beautifyMessage(text):
     text = text.strip()
+    text = re.sub('\n', ' ', text)
     text = re.sub(' +', ' ', text)
     return text
 
@@ -59,4 +61,14 @@ for c in getChannels(datapath):
             filepath = channelPath + "/" + f
             processFile(filepath, c)
 
-print(messages)
+
+def formatForFile(messages):
+    output = ""
+    shuffle(messages)
+    for message in messages:
+        output += "__label__" + message[0] + " " + message[1] + "\n"
+    return output
+
+
+with open('./data.txt', 'w') as datafile:
+    datafile.write(formatForFile(messages))

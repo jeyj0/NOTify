@@ -2,6 +2,7 @@
 fastText/
 SlackExport.zip
 data/
+data.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
