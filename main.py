@@ -3,7 +3,6 @@ import json
 from collections import namedtuple
 from os import listdir
 
-filepath = "./data/-00_announcements/2018-10-15.json"
 datapath = "./data"
 
 
