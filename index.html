@@ -42,23 +42,23 @@
     <button id="free">Set to free time</button>
     <button id="work">Set to work time</button>
     <script>
-      postData = (url = "", data = {}) =>
+      postData = (url = "", data = "") =>
         fetch(url, {
           method: "POST",
           mode: "cors",
           cache: "no-cache",
           credentials: "same-origin",
           headers: {
-            "Content-Type": "application/json; charset=utf-8"
+            // "Content-Type": "application/json; charset=utf-8"
           },
           redirect: "follow",
           referrer: "no-referrer",
-          body: JSON.stringify(data)
+          body: data //JSON.stringify(data)
         }).then(response => console.log(response.json()));
 
       document.getElementById("form").addEventListener("submit", e => {
         e.preventDefault();
-        postData("/notify", { text: document.getElementById("text").value });
+        postData("/notify", document.getElementById("text").value);
       });
 
       document.getElementById("free").addEventListener("click", e => {

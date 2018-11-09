@@ -65,8 +65,8 @@ def handleNotification(text):
 @app.route('/notify', methods=['POST'])
 def notify():
     data = request.data
-    text = loadFromJSONString(str(data)[2:-1]).text
-    # text = re.sub('\\\\', '\\', text)
+    text = data.decode('utf-8')
+    # text = loadFromJSONString(str(data)[2:-1]).text
     text = beautifyMessage(text)
     handleNotification(text)
     return request.data
