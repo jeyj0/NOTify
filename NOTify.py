@@ -15,6 +15,8 @@ channelToWorkMap = {
     '__label__unrestricted-chat': False
 }
 
+isWorkHours = True
+
 
 def logNotification(msg):
     print(msg)
@@ -27,7 +29,12 @@ def handleNotification(text):
 
     # re-weight all outputs based on
 
-    if channelToWorkMap[output]:
+    shouldBeShown = channelToWorkMap[output]
+
+    if not isWorkHours:
+        shouldBeShown = not shouldBeShown
+
+    if shouldBeShown:
         logNotification('New message in ' + output)
     else:
         logNotification('(silence)')
@@ -41,6 +48,20 @@ def notify():
     text = beautifyMessage(text)
     handleNotification(text)
     return request.data
+
+
+@app.route('/work', methods=['POST'])
+def setWork():
+    global isWorkHours
+    isWorkHours = True
+    return '{"isWorkHours":true}'
+
+
+@app.route('/free', methods=['POST'])
+def setFree():
+    global isWorkHours
+    isWorkHours = False
+    return '{"isWorkHours":false}'
 
 
 @app.route('/', methods=['GET'])
