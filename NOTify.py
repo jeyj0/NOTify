@@ -1,7 +1,9 @@
 from fastText import FastText
 from flask import Flask, request
+import re
 
 from loadFromJSONString import loadFromJSONString
+from beautifyMessage import beautifyMessage
 
 app = Flask(__name__)
 classifier = FastText.load_model('slack_model.bin')
@@ -29,6 +31,8 @@ def handleNotification(text):
 def notify():
     data = request.data
     text = loadFromJSONString(str(data)[2:-1]).text
+    # text = re.sub('\\\\', '\\', text)
+    text = beautifyMessage(text)
     handleNotification(text)
     return request.data
 
