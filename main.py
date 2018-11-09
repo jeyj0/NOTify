@@ -54,8 +54,9 @@ def processFile(filepath, channel):
 
 for c in getChannels(datapath):
     channelPath = datapath + "/" + c
-    for f in getFiles(channelPath):
-        filepath = channelPath + "/" + f
-        processFile(filepath, c)
+    if not c == ".DS_Store":
+        for f in getFiles(channelPath):
+            filepath = channelPath + "/" + f
+            processFile(filepath, c)
 
 print(messages)
