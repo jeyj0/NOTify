@@ -8,5 +8,4 @@ def beautifyMessage(text):
     text = text.lower()
     text = re.sub(r'<@.*>', 'MENTION', text)
     text = re.sub(r'[^0-9A-Za-z\s]', '', text)
-    # replace mentions with arbitrary placeholder
     return text
