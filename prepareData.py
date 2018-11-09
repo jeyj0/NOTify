@@ -5,6 +5,8 @@ from os import listdir
 from random import shuffle
 from math import ceil
 
+from beautifyMessage import beautifyMessage
+
 datapath = "./data"
 messages = []
 link_pattern = re.compile("^<https?://.*")
@@ -31,14 +33,6 @@ def meaningfulMessage(text):
         return False
 
     return True
-
-
-def beautifyMessage(text):
-    text = text.strip()
-    text = re.sub('\n', ' ', text)
-    text = re.sub(' +', ' ', text)
-    text = text.lower()
-    return text
 
 
 def processFile(filepath, channel):

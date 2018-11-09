@@ -5,6 +5,7 @@ data/
 *data.txt
 *model.bin
 *model.vec
+message.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
