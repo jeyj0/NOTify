@@ -42,16 +42,26 @@ def addToWorkQueue(msg):
 
 
 def handleNotification(text):
-    output = classifier.predict([text])[0][0][0]
+    output = classifier.predict([text], 5)  # [0][0][0]
+    print(output)
 
-    # re-weight all outputs based on
+    i_announcements = output[0][0].index('__label__-00_announcements')
+    i_general = output[0][0].index('__label__-01_general')
+    i_community = output[0][0].index('__label__-07_community')
+    i_randomfun = output[0][0].index('__label__-12_random-fun')
+    i_unrestricted = output[0][0].index('__label__unrestricted-chat')
 
-    shouldBeShown = channelToWorkMap[output]
+    funVotes = output[1][0][i_community] + \
+        output[1][0][i_randomfun] + output[1][0][i_unrestricted]
+    workVotes = output[1][0][i_announcements] + output[1][0][i_general]
+
+    # shouldBeShown = channelToWorkMap[output]
+    shouldBeShown = workVotes >= funVotes
 
     if not isWorkHours:
         shouldBeShown = not shouldBeShown
 
-    message = 'New message in ' + output[9:]
+    message = 'New message in ' + output[0][0][0][9:]
 
     if shouldBeShown:
         log(message)
