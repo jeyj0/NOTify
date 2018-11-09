@@ -16,15 +16,21 @@ channelToWorkMap = {
 }
 
 
+def logNotification(msg):
+    print(msg)
+    with open('NOTify.log', 'a') as log:
+        log.write(msg + '\n')
+
+
 def handleNotification(text):
     output = classifier.predict([text])[0][0][0]
 
     # re-weight all outputs based on
 
     if channelToWorkMap[output]:
-        print('New message in ' + output)
+        logNotification('New message in ' + output)
     else:
-        print('(silence)')
+        logNotification('(silence)')
 
 
 @app.route('/notify', methods=['POST'])
