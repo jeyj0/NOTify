@@ -120,7 +120,7 @@ separated_messages = separateMessages(messages)
 for msg in messagesNotInFilteredMessages:
     separated_messages[1].append(msg)
 
-print(len(messagesNotInFilteredMessages))
+print("add. Msgs for validation: " + str(len(messagesNotInFilteredMessages)))
 
 writeMessagesToFileInCorrectFormat(
     separated_messages[0], './training_data.txt')
