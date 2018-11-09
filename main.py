@@ -1,3 +1,4 @@
+import re
 import json
 from collections import namedtuple
 from os import listdir
@@ -22,8 +23,23 @@ def getFiles(path):
 messages = []
 
 
+link_pattern = re.compile("^<https?://.*")
+
+
 def meaningfulMessage(text):
-    return text != ''
+    if text == '':
+        return False
+
+    if link_pattern.match(text):
+        return False
+
+    return True
+
+
+def beautifyMessage(text):
+    text = text.strip()
+    text = re.sub(' +', ' ', text)
+    return text
 
 
 def processFile(filepath, channel):
@@ -33,7 +49,8 @@ def processFile(filepath, channel):
         for msg in data:
             if not hasattr(msg, 'subtype'):  # and not msg.subtype in subtypes:
                 if meaningfulMessage(msg.text):
-                    messages.append((channel, msg.text))
+                    text = beautifyMessage(msg.text)
+                    messages.append((channel, text))
 
 
 for c in getChannels(datapath):
