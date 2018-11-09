@@ -29,9 +29,6 @@ def meaningfulMessage(text):
     return True
 
 
-channels = []
-
-
 def processFile(filepath, channel):
     with open(filepath, 'r') as myfile:
         jsonString = myfile.read().replace('\n', '')
@@ -40,10 +37,6 @@ def processFile(filepath, channel):
             if not hasattr(msg, 'subtype'):  # and not msg.subtype in subtypes:
                 if meaningfulMessage(msg.text):
                     text = beautifyMessage(msg.text)
-                    if channel in channels:
-                        channels[channel] = channels[channel] + 1
-                    else:
-                        channels[channel] = 0
                     messages.append((channel, text))
 
 
@@ -74,8 +67,60 @@ def writeMessagesToFileInCorrectFormat(messages, filename):
         datafile.write(formatForFile(messages))
 
 
+def makeAllChannelsHaveEqualMessages(messages):
+    channels = {}
+    for msg in messages:
+        channel = msg[0]
+        if channel in channels:
+            channels[channel] = channels[channel] + 1
+        else:
+            channels[channel] = 1
+
+    minimumMessageCountPerChannel = 999999999999
+
+    for ch in channels:
+        if channels[ch] < minimumMessageCountPerChannel:
+            minimumMessageCountPerChannel = channels[ch]
+
+    filteredMessages = []
+    filteredMessageCounts = {}
+
+    for msg in messages:
+        channelName = msg[0]
+        if not channelName in filteredMessageCounts:
+            filteredMessageCounts[channelName] = 1
+        else:
+            filteredMessageCounts[channelName] = filteredMessageCounts[channelName] + 1
+
+        if not filteredMessageCounts[channelName] > minimumMessageCountPerChannel:
+            filteredMessages.append(msg)
+
+    print("min: " + str(minimumMessageCountPerChannel))
+    print("filteredMsgs: " + str(len(filteredMessages)))
+
+    return filteredMessages
+
+
+def notIn(originalMessages, messages):
+    msgs = []
+    for msg in originalMessages:
+        if not msg in messages:
+            msgs.append(msg)
+    return msgs
+
+
+o_msgs = messages
+messages = makeAllChannelsHaveEqualMessages(messages)
+
+messagesNotInFilteredMessages = notIn(o_msgs, messages)
+
 shuffle(messages)
 separated_messages = separateMessages(messages)
+
+for msg in messagesNotInFilteredMessages:
+    separated_messages[1].append(msg)
+
+print(len(messagesNotInFilteredMessages))
 
 writeMessagesToFileInCorrectFormat(
     separated_messages[0], './training_data.txt')
